@@ -2,11 +2,22 @@
 //  AppDelegate.m
 //  WineShopping
 //
-//  Created by xinying on 2017/6/14.
+//  Created by xinying on 2017/4/14.
 //  Copyright © 2017年 habav. All rights reserved.
 //
 
 #import "AppDelegate.h"
+#import "ZXTabBarController.h"
+
+#import <ShareSDK/ShareSDK.h>
+#import <ShareSDKConnector/ShareSDKConnector.h>
+#import "WXApi.h"
+#import "WeiboSDK.h"
+#import <TencentOpenAPI/TencentOAuth.h>
+#import <TencentOpenAPI/TencentApiInterface.h>
+#import <TencentOpenAPI/QQApiInterface.h>
+
+#import "ZXMapManager.h"
 
 @interface AppDelegate ()
 
@@ -16,8 +27,86 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    
+    ZXLog(@"%@",NSHomeDirectory());
+    [UIApplication sharedApplication].statusBarStyle =UIStatusBarStyleLightContent;
+    //设置键盘
+    //    设置键盘
+    IQKeyboardManager *manager          = [ IQKeyboardManager sharedManager];
+    manager.enable                      = YES;
+    manager.shouldResignOnTouchOutside  = YES;
+    manager.enableAutoToolbar           = NO;
+    
+    [self registShareSDK];
+    
+    BMKMapManager *mapManager           = [[BMKMapManager alloc]init];
+    if ([mapManager start:@"MoboTBCXuQbImL0wfRSCtyHAjk9j6prp" generalDelegate:nil])
+    {
+        ZXLog(@"百度地图startSuccess");
+        //        开始定位
+        [[ZXMapManager manager] startUserLocation];
+    }
+    
+    [self changeRootViewController];
+    
+    
     return YES;
+}
+
+- (void)changeRootViewController{
+    
+    UIWindow *window =[[UIApplication sharedApplication].delegate window];
+    ZXTabBarController *tabbarC =[[ZXTabBarController alloc] init];
+    tabbarC.tabBar.tintColor =THEME_COLOR;
+    window.rootViewController =tabbarC;
+    
+}
+
+/** shareSDK*/
+- (void)registShareSDK
+{
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        
+        
+        [ShareSDKConnector connectWeChat:[WXApi class] delegate:self];
+        
+        [ShareSDKConnector connectQQ:[QQApiInterface class] tencentOAuthClass:[TencentOAuth class]];
+        [ShareSDK registerApp:@"f67e4aa87334" activePlatforms:@[@(SSDKPlatformSubTypeWechatSession),@(SSDKPlatformSubTypeWechatTimeline),@(SSDKPlatformSubTypeQQFriend),@(SSDKPlatformSubTypeQZone),@(SSDKPlatformTypeSinaWeibo)] onImport:^(SSDKPlatformType platformType) {
+            switch (platformType)
+            {
+                case SSDKPlatformTypeWechat:
+                    [ShareSDKConnector connectWeChat:[WXApi class]];
+                    break;
+                case SSDKPlatformTypeQQ:
+                    [ShareSDKConnector connectQQ:[QQApiInterface class] tencentOAuthClass:[TencentOAuth class]];
+                    break;
+                case SSDKPlatformTypeSinaWeibo:
+                    [ShareSDKConnector connectWeibo:[WeiboSDK class]];
+                    break;
+                    
+                default:
+                    break;
+            }
+        } onConfiguration:^(SSDKPlatformType platformType, NSMutableDictionary *appInfo) {
+            switch (platformType)
+            {
+                    
+                case SSDKPlatformTypeWechat:
+                    [appInfo SSDKSetupWeChatByAppId:@"wx99edba10fa9ee81d"
+                                          appSecret:@"083faf098658c1633756cd3dbef84a72"];
+                    break;
+                case SSDKPlatformTypeQQ:
+                    [appInfo SSDKSetupQQByAppId:@"1105742566"
+                                         appKey:@"Jzj1vRwc8GNe4m36"
+                                       authType:SSDKAuthTypeBoth];
+                    break;
+                    
+                default:
+                    break;
+            }
+        }];
+        
+    });
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

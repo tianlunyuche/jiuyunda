@@ -1,0 +1,50 @@
+//
+//  PrefixHeader.pch
+//  WineShopping
+//
+//  Created by xinying on 2017/4/14.
+//  Copyright © 2017年 habav. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+// 第三方
+#import <ReactiveCocoa/ReactiveCocoa.h>
+#import <Masonry/Masonry.h>
+#import <SVProgressHUD/SVProgressHUD.h>
+#import <MJRefresh/MJRefresh.h>
+#import "UIImageView+WebCache.h"
+#import <AFNetworking/AFNetworking.h>
+#import "UIScrollView+EmptyDataSet.h"
+#import <MJExtension/MJExtension.h>
+#import "IQKeyboardManager.h"
+
+//宏
+#import "ZXMacro.h"
+#import "ZXURLMacro.h"
+
+//类别
+#import "UIColor+ZX.h"
+#import "UIImage+ZX.h"
+#import "UIButton+ZXBtn.h"
+#import "UIFont+ZX.h"
+#import "UILabel+ZX.h"
+#import "UITextField+ZX.h"
+
+
+#import "ZXBasedViewModel.h"
+#import "ZXBindProtocol.h"
+#import "ZXViewModelServices.h"
+#import "ZXBasedViewController.h"
+#import "ZXRequestManager.h"
+#import "ZXTool.h"
+#import "ZXUser.h"
+#import "ZXGood.h"
+#import "ZXShoppingManager.h"
+#import "ZXDataManager.h"
+#import "ZXNetWork.h"
+#import "ZXMapManager.h"
+
+
+#endif /* PrefixHeader_pch */
